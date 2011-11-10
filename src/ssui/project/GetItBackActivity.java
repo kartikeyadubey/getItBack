@@ -16,6 +16,7 @@
 
 package ssui.project;
 
+import org.json.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,9 +62,6 @@ public class GetItBackActivity extends Activity {
     private LoginButton mLoginButton;
     private TextView mText;
     private Button mRequestButton;
-    private Button mPostButton;
-    private Button mDeleteButton;
-    private Button mUploadButton;
 
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
@@ -191,8 +189,28 @@ public class GetItBackActivity extends Activity {
                 }
                 in.close();
                 String page = sb.toString();
-                Log.v("Got some data", page);
-                } catch (ClientProtocolException e) {
+                JSONArray money = null;
+                JSONObject object = null;
+				try {
+					object = (JSONObject) new JSONTokener(page).nextValue();
+	                money = object.getJSONArray(id);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+                
+                try {
+                	for(int i = 0; i < money.length(); i++)
+                	{
+                		Log.v("Got some data", money.getJSONObject(i).getString("money"));	
+                	}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                
+            } catch (ClientProtocolException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();

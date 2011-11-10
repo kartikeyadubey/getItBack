@@ -16,12 +16,21 @@
 
 package ssui.project;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -96,8 +105,6 @@ public class GetItBackActivity extends Activity {
         mRequestButton.setVisibility(mFacebook.isSessionValid() ?
                 View.VISIBLE :
                 View.INVISIBLE);
-
-        
     }
 
     @Override
@@ -138,7 +145,9 @@ public class GetItBackActivity extends Activity {
                 Log.d("Facebook-Example", "Response: " + response.toString());
                 JSONObject json = Util.parseJson(response);
                 final String name = json.getString("id");
-
+                
+                getData(name);
+                
                 // then post the processed result back to the UI thread
                 // if we do not do this, an runtime exception will be generated
                 // e.g. "CalledFromWrongThreadException: Only the original
@@ -154,90 +163,48 @@ public class GetItBackActivity extends Activity {
                 Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
             }
         }
-    }
-
-    public class SampleUploadListener extends BaseRequestListener {
-
-        public void onComplete(final String response, final Object state) {
+        
+        
+        /**
+         * Httprequest to connect to server and post data
+         * and receive and parse response
+         */
+        private void getData(String id)
+        {
+            Log.v("HTTP try to get", "data");
+        	BufferedReader in = null;
             try {
-                // process the response here: (executed in background thread)
-                Log.d("Facebook-Example", "Response: " + response.toString());
-                JSONObject json = Util.parseJson(response);
-                final String src = json.getString("src");
-
-                // then post the processed result back to the UI thread
-                // if we do not do this, an runtime exception will be generated
-                // e.g. "CalledFromWrongThreadException: Only the original
-                // thread that created a view hierarchy can touch its views."
-                GetItBackActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        mText.setText("Hello there, photo has been uploaded at \n" + src);
-                    }
-                });
-            } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
-            } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
-            }
-        }
-    }
-    public class WallPostRequestListener extends BaseRequestListener {
-
-        public void onComplete(final String response, final Object state) {
-            Log.d("Facebook-Example", "Got response: " + response);
-            String message = "<empty>";
-            try {
-                JSONObject json = Util.parseJson(response);
-                message = json.getString("message");
-            } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
-            } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
-            }
-            final String text = "Your Wall Post: " + message;
-            GetItBackActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    mText.setText(text);
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet();
+                try {
+					request.setURI(new URI("http://10.0.2.2/getItBackServer/getUserData.php?id="+id));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+                HttpResponse response = client.execute(request);
+                in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+                StringBuffer sb = new StringBuffer("");
+                String line = "";
+                String NL = System.getProperty("line.separator");
+                while ((line = in.readLine()) != null) {
+                    sb.append(line + NL);
                 }
-            });
-        }
-    }
-
-    public class WallPostDeleteListener extends BaseRequestListener {
-
-        public void onComplete(final String response, final Object state) {
-            if (response.equals("true")) {
-                Log.d("Facebook-Example", "Successfully deleted wall post");
-                GetItBackActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        mDeleteButton.setVisibility(View.INVISIBLE);
-                        mText.setText("Deleted Wall Post");
+                in.close();
+                String page = sb.toString();
+                Log.v("Got some data", page);
+                } catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                        } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                });
-            } else {
-                Log.d("Facebook-Example", "Could not delete wall post");
+                }
             }
         }
     }
-
-    public class SampleDialogListener extends BaseDialogListener {
-
-        public void onComplete(Bundle values) {
-            final String postId = values.getString("post_id");
-            if (postId != null) {
-                Log.d("Facebook-Example", "Dialog Success! post_id=" + postId);
-                mAsyncRunner.request(postId, new WallPostRequestListener());
-                mDeleteButton.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        mAsyncRunner.request(postId, new Bundle(), "DELETE",
-                                new WallPostDeleteListener(), null);
-                    }
-                });
-                mDeleteButton.setVisibility(View.VISIBLE);
-            } else {
-                Log.d("Facebook-Example", "No wall post made");
-            }
-        }
-    }
-
 }

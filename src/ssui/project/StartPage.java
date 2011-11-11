@@ -16,9 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ssui.project.SampleAuthListener;
-import ssui.project.SampleLogoutListener;
-
 import com.facebook.android.AsyncFacebookRunner;
 import ssui.project.BaseRequestListener;
 
@@ -26,7 +23,8 @@ import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.R;
 import com.facebook.android.Util;
-
+import ssui.project.SessionEvents.AuthListener;
+import ssui.project.SessionEvents.LogoutListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,7 +44,7 @@ public class StartPage extends Activity
     private Button mRequestButton;
     private TextView mText;
     //Logout button
-    private LoginButton mLogoutButton;
+    private LogoutButton mLogoutButton;
 	/**
 	 * Called when Activity is created
 	 * Generate the login screen for the user to sign in
@@ -55,6 +53,8 @@ public class StartPage extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		
+		Log.v("Intent", "is created");
 		  //Create an instance of Facebook
         mFacebook = new Facebook(APP_ID);
         //Instantiate the request api variable to the instance of facebook
@@ -62,17 +62,15 @@ public class StartPage extends Activity
        	
        	//Restore information from the facebook variable
         SessionStore.restore(mFacebook, this);
-        SessionEvents.addAuthListener(new SampleAuthListener());
-        SessionEvents.addLogoutListener(new SampleLogoutListener());
+        SessionEvents.addAuthListener(new StartPageAuthListener());
+        SessionEvents.addLogoutListener(new StartPageLogoutListener());
         
-       	if(mFacebook.isSessionValid())Log.v("session", "is valid");
+       	if(mFacebook.isSessionValid())Log.v("Intent session", "is valid");
 		setContentView(R.layout.userlogin);
 		mRequestButton = (Button) findViewById(R.id.testRequestButton);
 		mText = (TextView) findViewById(R.id.testText);
-		mLogoutButton = (LoginButton) findViewById(R.id.fb_logout);
+		mLogoutButton = (LogoutButton) findViewById(R.id.fb_logout);
 		mLogoutButton.init(this, mFacebook);
-
-
 
         
         mRequestButton.setOnClickListener(new OnClickListener() {
@@ -86,6 +84,32 @@ public class StartPage extends Activity
 	}
 	
 	
+    public class StartPageAuthListener implements AuthListener {
+
+        public void onAuthSucceed() {
+            mText.setText("Intent You have logged in! ");
+            mRequestButton.setVisibility(View.VISIBLE);
+        }
+
+        public void onAuthFail(String error) {
+            mText.setText("Login Failed: " + error);
+        }
+    }
+	
+    
+    public class StartPageLogoutListener implements LogoutListener {
+        public void onLogoutBegin() {
+            Log.v("Intent Logging out...", "....");
+        }
+
+        public void onLogoutFinish() {
+        	setResult(RESULT_OK);
+        	
+        	Log.v("Intent Logging out...", "Complete");
+        	finish();
+        }
+    }
+    
 	
 	public class SampleRequestListener extends BaseRequestListener {
 
@@ -112,8 +136,7 @@ public class StartPage extends Activity
 	            Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
 	        }
 	    }
-	    
-	    
+	    	  
 	    
 	    /**
          * Httprequest to connect to server and post data

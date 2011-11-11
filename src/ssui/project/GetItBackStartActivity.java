@@ -16,36 +16,20 @@
 
 package ssui.project;
 
-import org.json.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
+import ssui.project.LoginButton;
+import com.facebook.android.R;
 import com.facebook.android.Util;
+import ssui.project.SessionEvents.LogoutListener;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.TextView;
 
 import ssui.project.SessionEvents.AuthListener;
-import ssui.project.SessionEvents.LogoutListener;
 
 
 public class GetItBackStartActivity extends Activity {
@@ -53,18 +37,14 @@ public class GetItBackStartActivity extends Activity {
     // Set facebook app id
     public static final String APP_ID = "161076967321553";
 
+    private static final int REQUEST_OK = 1;
     
-    //Login button
-    private LoginButton mLoginButton;
     //Print out test statements
     private TextView mText;
-    //Pull test data
-    private Button mRequestButton;
-
+    //Login button
+    private LoginButton mLoginButton;
     //Facebook object
     private Facebook mFacebook;
-    //Asynchronous API requests through this variable
-    private AsyncFacebookRunner mAsyncRunner;
 
     /** Called when the activity is first created. */
     @Override
@@ -76,17 +56,25 @@ public class GetItBackStartActivity extends Activity {
                     "specified before running this example: see Example.java");
         }
 
+        initialize();
+    }
+    
+    /**
+     * Initialize all variables
+     * check if session is valid
+     * if it is valid then start the StartPage activity
+     * otherwise open a webview and make the user login
+     */
+    private void initialize()
+    {
         //Create an instance of Facebook
         mFacebook = new Facebook(APP_ID);
-        //Instantiate the request api variable to the instance of facebook
-       	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
-
+        
        	//Restore information from the facebook variable
         SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
         SessionEvents.addLogoutListener(new SampleLogoutListener());
-        
-        
+
         //check if mFacebook is logged in
         //if already logged in start pulling data
         //else show login in button
@@ -95,128 +83,62 @@ public class GetItBackStartActivity extends Activity {
         	//Start activity to 
         	Log.v("User is", "Logged in");
         	Intent i = new Intent(this.getApplicationContext(), StartPage.class);
-        	SessionStore.save(mFacebook, getBaseContext());
-        	startActivity(i);
+        	SessionStore.save(mFacebook, getApplicationContext());
+        	startActivityForResult(i, REQUEST_OK);
     	}
         else
         {
-        	Log.v("User is", "Not logged in");
+        	Log.v("User is currently", "not logged in");
         	mFacebook.authorize(this, new String[]{}, new LoginDialogListener());
-        	setContentView(R.layout.main);
-        	mLoginButton = (LoginButton) findViewById(R.id.login);
-            mText = (TextView) GetItBackStartActivity.this.findViewById(R.id.txt);
-            mRequestButton = (Button) findViewById(R.id.requestButton);
-            mLoginButton.init(this, mFacebook);
-            mRequestButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                	mAsyncRunner.request("me", new SampleRequestListener());
-                }
-            });
-            mRequestButton.setVisibility(mFacebook.isSessionValid() ?
-                    View.VISIBLE :
-                    View.INVISIBLE);
         }
+    }
+    
+    private void makeButton()
+    {
+    	
+       	//Restore information from the facebook variable
+        SessionStore.restore(mFacebook, this);
 
         
-
+    	setContentView(R.layout.main);
+        mLoginButton = (LoginButton) findViewById(R.id.login);
+        mLoginButton.init(this, mFacebook);
     }
-
+    
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         mFacebook.authorizeCallback(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && requestCode == REQUEST_OK)
+        {
+        	SessionStore.clear(getApplicationContext());
+        	makeButton();
+        }
     }
 
 
+    public class SampleAuthListener implements AuthListener {
 
-    public class SampleRequestListener extends BaseRequestListener {
-
-        public void onComplete(final String response, final Object state) {
-            try {
-                // process the response here: executed in background thread
-                Log.d("Facebook-Example", "Response: " + response.toString());
-                JSONObject json = Util.parseJson(response);
-                final String name = json.getString("id");
-                
-                getData(name);
-                
-                // then post the processed result back to the UI thread
-                // if we do not do this, an runtime exception will be generated
-                // e.g. "CalledFromWrongThreadException: Only the original
-                // thread that created a view hierarchy can touch its views."
-                GetItBackStartActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        mText.setText("Hello there, " + name + "!");
-                    }
-                });
-            } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
-            } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
-            }
+        public void onAuthSucceed() {
+        	Log.v("Auth succeeded", "...");
+        	SessionStore.save(mFacebook, getApplicationContext());
+        	Intent i = new Intent(getBaseContext(), StartPage.class);
+        	startActivityForResult(i, REQUEST_OK);
         }
-        
-        
-        /**
-         * Httprequest to connect to server and post data
-         * and receive and parse response
-         */
-        private void getData(String id)
-        {
-            Log.v("HTTP try to get", "data");
-        	BufferedReader in = null;
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet();
-                try {
-					request.setURI(new URI("http://kartikeyadubey.com/getItBackServer/getUserData.php?id="+id));
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-                HttpResponse response = client.execute(request);
-                in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                StringBuffer sb = new StringBuffer("");
-                String line = "";
-                String NL = System.getProperty("line.separator");
-                while ((line = in.readLine()) != null) {
-                    sb.append(line + NL);
-                }
-                in.close();
-                String page = sb.toString();
-                JSONArray money = null;
-                JSONObject object = null;
-				try {
-					object = (JSONObject) new JSONTokener(page).nextValue();
-	                money = object.getJSONArray(id);
-				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 
-                
-                try {
-                	for(int i = 0; i < money.length(); i++)
-                	{
-                		Log.v("Got some data", money.getJSONObject(i).getString("money"));	
-                	}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                
-            } catch (ClientProtocolException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                        } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        public void onAuthFail(String error) {
+        	
+        }
+    }
+    
+    public class SampleLogoutListener implements LogoutListener {
+        public void onLogoutBegin() {
+        	Log.v("Main Activity Logging out...", "Complete");
+        }
+
+        public void onLogoutFinish() {
+        	Log.v("Main activity Logging out...", "Complete");
         }
     }
 }

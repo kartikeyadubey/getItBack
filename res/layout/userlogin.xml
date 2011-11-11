@@ -18,10 +18,10 @@
         android:layout_height="wrap_content" 
         android:paddingRight="20dp" 
         android:paddingLeft="20dp"
-        android:layout_margin="20dp" 
+        android:layout_margin="50dp" 
         />
         
-      <ssui.project.LoginButton android:id="@+id/fb_logout"
+      <ssui.project.LogoutButton android:id="@+id/fb_logout"
 		android:src="@drawable/facebook_logout"  
 		android:layout_margin="10dp" 
 		android:layout_height="wrap_content" 

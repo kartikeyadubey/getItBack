@@ -28,12 +28,10 @@ public final class R {
         public static final int white=0x7f02000d;
     }
     public static final class id {
-        public static final int fb_logout=0x7f050005;
-        public static final int login=0x7f050002;
-        public static final int requestButton=0x7f050001;
-        public static final int testRequestButton=0x7f050004;
-        public static final int testText=0x7f050003;
-        public static final int txt=0x7f050000;
+        public static final int fb_logout=0x7f050003;
+        public static final int login=0x7f050000;
+        public static final int testRequestButton=0x7f050002;
+        public static final int testText=0x7f050001;
     }
     public static final class layout {
         public static final int main=0x7f030000;

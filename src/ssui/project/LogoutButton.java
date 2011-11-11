@@ -37,7 +37,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-public class LoginButton extends ImageButton {
+public class LogoutButton extends ImageButton {
     
     private Facebook mFb;
     private Handler mHandler;
@@ -45,15 +45,15 @@ public class LoginButton extends ImageButton {
     private String[] mPermissions;
     private Activity mActivity;
     
-    public LoginButton(Context context) {
+    public LogoutButton(Context context) {
         super(context);
     }
     
-    public LoginButton(Context context, AttributeSet attrs) {
+    public LogoutButton(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
     
-    public LoginButton(Context context, AttributeSet attrs, int defStyle) {
+    public LogoutButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
     

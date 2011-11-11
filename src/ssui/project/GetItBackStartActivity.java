@@ -53,11 +53,17 @@ public class GetItBackStartActivity extends Activity {
     // Set facebook app id
     public static final String APP_ID = "161076967321553";
 
+    
+    //Login button
     private LoginButton mLoginButton;
+    //Print out test statements
     private TextView mText;
+    //Pull test data
     private Button mRequestButton;
 
+    //Facebook object
     private Facebook mFacebook;
+    //Asynchronous API requests through this variable
     private AsyncFacebookRunner mAsyncRunner;
 
     /** Called when the activity is first created. */
@@ -70,9 +76,12 @@ public class GetItBackStartActivity extends Activity {
                     "specified before running this example: see Example.java");
         }
 
+        //Create an instance of Facebook
         mFacebook = new Facebook(APP_ID);
+        //Instantiate the request api variable to the instance of facebook
        	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
+       	//Restore information from the facebook variable
         SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
         SessionEvents.addLogoutListener(new SampleLogoutListener());
@@ -84,25 +93,32 @@ public class GetItBackStartActivity extends Activity {
         if(mFacebook.isSessionValid())
     	{
         	//Start activity to 
-        	Log.v("User", "Logged in");
+        	Log.v("User is", "Logged in");
+        	Intent i = new Intent(this.getApplicationContext(), StartPage.class);
+        	SessionStore.save(mFacebook, getBaseContext());
+        	startActivity(i);
     	}
+        else
+        {
+        	Log.v("User is", "Not logged in");
+        	mFacebook.authorize(this, new String[]{}, new LoginDialogListener());
+        	setContentView(R.layout.main);
+        	mLoginButton = (LoginButton) findViewById(R.id.login);
+            mText = (TextView) GetItBackStartActivity.this.findViewById(R.id.txt);
+            mRequestButton = (Button) findViewById(R.id.requestButton);
+            mLoginButton.init(this, mFacebook);
+            mRequestButton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                	mAsyncRunner.request("me", new SampleRequestListener());
+                }
+            });
+            mRequestButton.setVisibility(mFacebook.isSessionValid() ?
+                    View.VISIBLE :
+                    View.INVISIBLE);
+        }
 
         
-        
-        setContentView(R.layout.main);
-        mLoginButton = (LoginButton) findViewById(R.id.login);
-        mText = (TextView) GetItBackStartActivity.this.findViewById(R.id.txt);
-        mRequestButton = (Button) findViewById(R.id.requestButton);
-        mLoginButton.init(this, mFacebook);
 
-        mRequestButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-            	mAsyncRunner.request("me", new SampleRequestListener());
-            }
-        });
-        mRequestButton.setVisibility(mFacebook.isSessionValid() ?
-                View.VISIBLE :
-                View.INVISIBLE);
     }
 
     @Override
@@ -111,29 +127,7 @@ public class GetItBackStartActivity extends Activity {
         mFacebook.authorizeCallback(requestCode, resultCode, data);
     }
 
-    public class SampleAuthListener implements AuthListener {
 
-        public void onAuthSucceed() {
-            mText.setText("You have logged in! ");
-            mRequestButton.setVisibility(View.VISIBLE);
-        }
-
-        public void onAuthFail(String error) {
-            mText.setText("Login Failed: " + error);
-        }
-    }
-
-    public class SampleLogoutListener implements LogoutListener {
-        public void onLogoutBegin() {
-            mText.setText("Logging out...");
-        }
-
-        public void onLogoutFinish() {
-        	Log.v("User has", "logged out");
-            mText.setText("You have logged out! ");
-            mRequestButton.setVisibility(View.INVISIBLE);
-        }
-    }
 
     public class SampleRequestListener extends BaseRequestListener {
 

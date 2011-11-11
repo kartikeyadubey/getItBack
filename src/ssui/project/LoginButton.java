@@ -33,6 +33,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -69,6 +70,8 @@ public class LoginButton extends ImageButton {
         
         setBackgroundColor(Color.TRANSPARENT);
         setAdjustViewBounds(true);
+        if(fb.isSessionValid()) Log.v("facebook_logout","damn");
+        else Log.v("facebook_login", "WTF");
         setImageResource(fb.isSessionValid() ?
         				R.drawable.facebook_logout : R.drawable.facebook_login);
         drawableStateChanged();

@@ -3,26 +3,15 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:background="@drawable/white"
 	android:gravity="center_horizontal">
-
-    <ssui.project.LoginButton
-        android:id="@+id/login"
-        android:src="@drawable/facebook_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:layout_margin="30dp"
-        />
 		
-	<Button android:id="@+id/uploadButton"
-        android:text="@string/upload"
-        android:visibility="invisible"
+	<TextView android:id="@+id/testText" 
+        android:text="@string/hello"
+        android:textColor="@drawable/black"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:paddingRight="20dp" 
-        android:paddingLeft="20dp"
-        android:layout_margin="20dp" 
-        />
+        android:layout_height="wrap_content"
+	/>
         
-	<Button android:id="@+id/requestButton"
+	<Button android:id="@+id/testRequestButton"
         android:text="@string/request"
         android:visibility="invisible"
         android:layout_width="wrap_content"
@@ -31,28 +20,12 @@
         android:paddingLeft="20dp"
         android:layout_margin="20dp" 
         />
-
-
-	<Button android:id="@+id/postButton" 
-        android:text="@string/post"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:paddingRight="20dp" 
-        android:paddingLeft="20dp"
-        android:layout_margin="20dp" 
-		/>
-		
-    <Button android:id="@+id/deletePostButton" 
-        android:text="@string/delete"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:paddingRight="20dp" 
-        android:paddingLeft="20dp"
-        android:layout_margin="20dp" 
-        />
-
-
+        
+      <ssui.project.LoginButton android:id="@+id/fb_logout"
+		android:src="@drawable/facebook_logout"  
+		android:layout_margin="10dp" 
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content"
+		android:layout_gravity="left"/>
 
 </LinearLayout>

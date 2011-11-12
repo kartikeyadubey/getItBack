@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:background="@drawable/white"
-	android:gravity="center_horizontal">
+	android:layout_height="fill_parent" android:background="@drawable/black"
+	android:gravity="left">
+		
 		
 	<TextView android:id="@+id/testText" 
-        android:text="@string/hello"
-        android:textColor="@drawable/black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+       android:text="@string/hello"
+       android:textColor="@drawable/white"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
 	/>
+	
+	<TextView android:id="@+id/collectMoney" 
+        android:text="@string/collectMoney"
+        android:textColor="@drawable/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+        
+	<TextView android:id="@+id/returnMoney" 
+        android:text="@string/returnMoney"
+        android:textColor="@drawable/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+        
+        <AutoCompleteTextView android:id="@+id/autocompleteFriends"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"/>
+        
         
 	<Button android:id="@+id/testRequestButton"
         android:text="@string/request"

@@ -88,7 +88,7 @@ public class GetItBackStartActivity extends Activity {
     	}
         else
         {
-        	Log.v("User is currently", "not logged in");
+        	Log.v("User is currently", "not logged in...");
         	mFacebook.authorize(this, new String[]{}, new LoginDialogListener());
         }
     }

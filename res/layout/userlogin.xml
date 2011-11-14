@@ -3,48 +3,87 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:background="@drawable/black"
 	android:gravity="left">
+
+
+	<TextView android:id="@+id/testText" android:text="@string/hello"
+		android:textColor="@drawable/white" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+
+	<TextView android:id="@+id/collectMoney" android:text="@string/collectMoney"
+		android:textColor="@drawable/white" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+
+	<TextView android:id="@+id/returnMoney" android:text="@string/returnMoney"
+		android:textColor="@drawable/white" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1">
+		<TextView android:id="@+id/fName" android:text="@string/friend"
+			android:textColor="@drawable/white" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_weight="0" />
+
+		<AutoCompleteTextView android:id="@+id/autocompleteFriends"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:singleLine="true" android:layout_marginLeft="5dp"
+			android:layout_weight="1" />
+
+	</LinearLayout>
+
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1">
+		<TextView android:id="@+id/amount" android:text="@string/amount"
+			android:textColor="@drawable/white" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_weight="0" />
+		<EditText android:id="@+id/moneyAmount" android:gravity="left"
+			android:background="@drawable/white" android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="5dp"
+			android:singleLine="true" android:inputType="numberDecimal"
+			android:layout_weight="1" />
+	</LinearLayout>
+
+
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1">
+		<TextView android:id="@+id/descriptionLabel" android:text="@string/description"
+			android:textColor="@drawable/white" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_weight="0" />
+		<EditText android:id="@+id/description" android:gravity="left"
+			android:background="@drawable/white" android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:layout_marginLeft="5dp"
+			android:singleLine="true" android:inputType="text"
+			android:layout_weight="1" />
+	</LinearLayout>
+
+
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1">
+
+		<TextView android:id="@+id/dateLabel" android:text="@string/date"
+			android:textColor="@drawable/white" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_weight="0" />
+
+		<TextView android:id="@+id/date" android:textColor="@drawable/white"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_weight="0" android:layout_marginLeft="5dp" />
+
+		<Button android:id="@+id/dateButton" android:text="@string/dateselect"
+			android:visibility="visible" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_marginLeft="5dp" />
+	</LinearLayout>
+
+
+	<Button android:id="@+id/submitButton" android:text="@string/submit"
+		android:visibility="visible" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_marginLeft="100dp"/>
 		
-		
-	<TextView android:id="@+id/testText" 
-       android:text="@string/hello"
-       android:textColor="@drawable/white"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-	/>
-	
-	<TextView android:id="@+id/collectMoney" 
-        android:text="@string/collectMoney"
-        android:textColor="@drawable/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-        
-	<TextView android:id="@+id/returnMoney" 
-        android:text="@string/returnMoney"
-        android:textColor="@drawable/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-        
-        <AutoCompleteTextView android:id="@+id/autocompleteFriends"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"/>
-        
-        
-	<Button android:id="@+id/testRequestButton"
-        android:text="@string/request"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:paddingRight="20dp" 
-        android:paddingLeft="20dp"
-        android:layout_margin="50dp" 
-        />
-        
-      <ssui.project.LogoutButton android:id="@+id/fb_logout"
-		android:src="@drawable/facebook_logout"  
-		android:layout_margin="10dp" 
-		android:layout_height="wrap_content" 
-		android:layout_width="wrap_content"
-		android:layout_gravity="left"/>
+	<ssui.project.LogoutButton android:id="@+id/fb_logout"
+		android:src="@drawable/facebook_logout" android:layout_margin="10dp"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:layout_gravity="left" />
 
 </LinearLayout>

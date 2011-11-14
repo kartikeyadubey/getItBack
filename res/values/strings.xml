@@ -7,5 +7,10 @@
     <string name="delete">Delete Post</string>
    	<string name="collectMoney">You need to collect: </string>
 	<string name="returnMoney">You need to return: </string>
-
+	<string name="amount">Amount</string>
+	<string name="friend">Name</string>
+	<string name="description">Description</string>
+	<string name="date">Date</string>
+	<string name="dateselect">Change Date</string>
+	<string name="submit">Submit Bill</string>
 </resources>

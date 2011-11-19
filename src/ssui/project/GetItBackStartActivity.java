@@ -26,8 +26,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
-
 import ssui.project.SessionEvents.AuthListener;
 
 
@@ -38,8 +36,6 @@ public class GetItBackStartActivity extends Activity {
 
     private static final int REQUEST_OK = 1;
     
-    //Print out test statements
-    private TextView mText;
     //Login button
     private LoginButton mLoginButton;
     //Facebook object
@@ -68,7 +64,7 @@ public class GetItBackStartActivity extends Activity {
     {
         //Create an instance of Facebook
         mFacebook = new Facebook(APP_ID);
-        
+        SessionStore.clear(getApplicationContext());
        	//Restore information from the facebook variable
         SessionStore.restore(mFacebook, this);
         SessionEvents.addAuthListener(new SampleAuthListener());
@@ -77,7 +73,7 @@ public class GetItBackStartActivity extends Activity {
         //check if mFacebook is logged in
         //if already logged in start pulling data
         //else show login in button
-        if(mFacebook.isSessionValid())
+        if(mFacebook.isSessionValid() && mFacebook.getAccessExpires() != 0)
     	{
         	//Start activity to 
         	Log.v("User is", "Logged in");
@@ -94,10 +90,9 @@ public class GetItBackStartActivity extends Activity {
     
     private void makeButton()
     {
-    	
+    	if(mFacebook.isSessionValid()) Log.d("Making button", "Session is valid");
        	//Restore information from the facebook variable
-        SessionStore.restore(mFacebook, this);
-
+        SessionStore.restore(mFacebook, getApplicationContext());
         
     	setContentView(R.layout.main);
         mLoginButton = (LoginButton) findViewById(R.id.login);
@@ -111,8 +106,16 @@ public class GetItBackStartActivity extends Activity {
         mFacebook.authorizeCallback(requestCode, resultCode, data);
         if(resultCode == RESULT_OK && requestCode == REQUEST_OK)
         {
-        	SessionStore.clear(getApplicationContext());
+        	Log.d("Should make new", "button.");
         	makeButton();
+        }
+        else if(resultCode == RESULT_CANCELED)
+        {
+        	Log.d("Should create", "new intent");
+        	//mFacebook.logout(getApplicationContext());
+			//SessionStore.clear(getApplicationContext());
+			//SessionStore.save(mFacebook, getApplicationContext());
+			mFacebook.authorize(this, new String[]{}, new LoginDialogListener());
         }
     }
 
@@ -120,7 +123,7 @@ public class GetItBackStartActivity extends Activity {
     public class SampleAuthListener implements AuthListener {
 
         public void onAuthSucceed() {
-        	Log.v("Auth succeeded", "...");
+        	Log.v("Auth succeeded.", "...");
         	SessionStore.save(mFacebook, getApplicationContext());
         	Intent i = new Intent(getBaseContext(), StartPage.class);
         	startActivityForResult(i, REQUEST_OK);

@@ -80,7 +80,18 @@
 	<Button android:id="@+id/submitButton" android:text="@string/submit"
 		android:visibility="visible" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_marginLeft="100dp"/>
+
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1">		
+	<Button android:id="@+id/viewBills" android:text="@string/viewBills"
+		android:visibility="visible" android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
 		
+	<Button android:id="@+id/viewReturns" android:text="@string/viewReturns"
+		android:visibility="visible" android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+		</LinearLayout>
 	<ssui.project.LogoutButton android:id="@+id/fb_logout"
 		android:src="@drawable/facebook_logout" android:layout_margin="10dp"
 		android:layout_height="wrap_content" android:layout_width="wrap_content"

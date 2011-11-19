@@ -35,6 +35,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,10 +47,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class StartPage extends Activity {
 	// Facebook object
-	private Facebook _mFacebook;
+	private Facebook mFacebook;
 	// Set facebook app id
 	public static final String APP_ID = "161076967321553";
 
@@ -70,7 +72,12 @@ public class StartPage extends Activity {
 	private Button _submit;
 	//Change date button
 	private Button dateButton;
-
+	//View bills button
+	private Button _viewBills;
+	//View all returns
+	private Button _viewReturns;
+	
+	
 	//Auto complete friend name
 	private AutoCompleteTextView _personOne;
 	
@@ -110,33 +117,36 @@ public class StartPage extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.v("Intent", "is created");
+		Log.v("Intent", "has been created");
 		// Create an instance of Facebook
-		_mFacebook = new Facebook(APP_ID);
-		new AsyncFacebookRunner(_mFacebook);
+		mFacebook = new Facebook(APP_ID);
+		new AsyncFacebookRunner(mFacebook);
 
 		// Restore information from the facebook variable
-		SessionStore.restore(_mFacebook, this);
-		SessionEvents.addAuthListener(new StartPageAuthListener());
+		SessionStore.restore(mFacebook, getApplicationContext());
+		//SessionEvents.addAuthListener(new StartPageAuthListener());
 		SessionEvents.addLogoutListener(new StartPageLogoutListener());
 
 		GetDataTask task = new GetDataTask();
 		task.execute(new String[] { "me", "me/friends" });
 
-		if (_mFacebook.isSessionValid())
+		if (mFacebook.isSessionValid())
 			Log.v("Intent session", "is valid");
+		
 		setContentView(R.layout.userlogin);
 		dateButton = (Button) findViewById(R.id.dateButton);
 		_mCollect = (TextView) findViewById(R.id.collectMoney);
 		_mReturn = (TextView) findViewById(R.id.returnMoney);
 		_date = (TextView) findViewById(R.id.date);
 		_submit = (Button) findViewById(R.id.submitButton);
+		_viewBills = (Button) findViewById(R.id.viewBills);
+		_viewReturns = (Button) findViewById(R.id.viewReturns);
 		_description = (EditText) findViewById(R.id.description);
 		_name = (AutoCompleteTextView) findViewById(R.id.autocompleteFriends);
 		_moneyAmount = (EditText) findViewById(R.id.moneyAmount);
 		mText = (TextView) findViewById(R.id.testText);
 		_mLogoutButton = (LogoutButton) findViewById(R.id.fb_logout);
-		_mLogoutButton.init(this, _mFacebook);
+		_mLogoutButton.init(this, mFacebook);
 
 
 		// get the current date
@@ -144,22 +154,37 @@ public class StartPage extends Activity {
 		mYear = c.get(Calendar.YEAR);
 		mMonth = c.get(Calendar.MONTH);
 		mDay = c.get(Calendar.DAY_OF_MONTH);
+		
+		_date.setText(Integer.toString(mMonth)+ "-" + Integer.toString(mDay) + "-" + Integer.toString(mYear));
+		_postDate = Integer.toString(mYear) + "-" + Integer.toString(mMonth)+ "-" + Integer.toString(mDay);
 
+		_viewBills.setOnClickListener(new OnClickListener(){
+			
+			//Start new Activity which displays all
+			//the bills for this person
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getApplicationContext(), ViewBills.class);
+				i.putExtra("userid", _currUID);
+				SessionStore.save(mFacebook, getApplicationContext());
+				startActivityForResult(i, RESULT_OK);
+			}
+		});
+		
 		_submit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				String name = _name.getText().toString();
 				String id = getFriendId(name);
 				String description = _description.getText().toString();
-				String date = _date.getText().toString();
+				String date = _postDate;
 				String amount = _moneyAmount.getText().toString();
 				postData(name, id, description, date,amount);
 			}
 		});
 		
 
-		_date.setText(Integer.toString(mMonth)+ "-" + Integer.toString(mDay) + "-" + Integer.toString(mYear));
-		_postDate = Integer.toString(mYear) + "-" + Integer.toString(mMonth)+ "-" + Integer.toString(mDay);
+
 
 		dateButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -180,10 +205,12 @@ public class StartPage extends Activity {
 	{
 		// Create a new HttpClient and Post Header
 	    HttpClient httpclient = new DefaultHttpClient();
-	    HttpPost httppost = new HttpPost("http://www.kartikeyadubey.com/getitbackserver/addBill.php");
+	    HttpPost httppost = new HttpPost("http://10.0.2.2/getItBackServer/addBill.php");
 
 	    try {
 	        // Add data
+	    	Log.v("Date", date);
+	    	Log.v("Money", amount);
 	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 	        nameValuePairs.add(new BasicNameValuePair("personOne", _currUID));
 	        nameValuePairs.add(new BasicNameValuePair("personOneName", _currUName));
@@ -196,6 +223,18 @@ public class StartPage extends Activity {
 
 	        // Execute HTTP Post Request
 	        HttpResponse response = httpclient.execute(httppost);
+	        String postResponse = getResponse(response);
+	        Log.d("Post response", postResponse);
+	        //get readable response
+	        if(postResponse.equalsIgnoreCase("S"))
+	        {
+	        	Toast.makeText(this, "Bill Added Successfully", Toast.LENGTH_LONG).show();
+	        	clearOptions();
+	        }
+	        else
+	        {
+	        	Toast.makeText(this, "Please Try Submitting Again", Toast.LENGTH_LONG).show();
+	        }
 	        
 	    } catch (ClientProtocolException e) {
 	    	e.printStackTrace();
@@ -204,6 +243,178 @@ public class StartPage extends Activity {
 	    }
 	}
 	
+	
+	/**
+	 * Clear all the options
+	 */
+	private void clearOptions()
+	{
+		UpdateDataTask update = new UpdateDataTask();
+		update.execute(new String[]{"me"});
+	}
+	
+	/**
+	 * Async task to clear UI and update the total to be 
+	 * collected and returned
+	 */
+	private class UpdateDataTask extends AsyncTask<String, Integer, Long> {
+
+		protected void onPreExecute() {
+		}
+
+		protected Long doInBackground(String... urls) {
+			try {
+				JSONObject jsonMoney = Util.parseJson(mFacebook
+						.request(urls[0]));
+				_currUName = jsonMoney.getString("name");
+				_currUID = jsonMoney.getString("id");
+				
+				final double totalMoney[] = getData(_currUID);
+				_collectMoney = totalMoney[0];
+				_returnMoney = totalMoney[1];
+			} catch (MalformedURLException e) {
+				setResult(RESULT_CANCELED);
+				finish();
+				e.printStackTrace();
+			} catch (IOException e) {
+				setResult(RESULT_CANCELED);
+				finish();
+				e.printStackTrace();
+			} catch (JSONException e) {
+				setResult(RESULT_CANCELED);
+				finish();
+				e.printStackTrace();
+			} catch (FacebookError e) {
+				Log.d("Facebook error", "Should get caught here");
+				//setResult(RESULT_CANCELED);
+				//finish();
+				e.printStackTrace();
+				return (long) -1;
+			}
+			return (long) 1;
+		}
+		
+		/**
+		 * Httprequest to connect to server and post data and receive and parse
+		 * response
+		 */
+		private double[] getData(String id) {
+			// Index 0 is money to collect
+			// Index 1 is money to return
+			double[] retVal = { 0, 0 };
+			Log.v("HTTP trying to get", "data");
+			BufferedReader in = null;
+			try {
+				HttpClient client = new DefaultHttpClient();
+				HttpGet request = new HttpGet();
+				try {
+					request.setURI(new URI(
+							"http://10.0.2.2/getItBackServer/getUserTotal.php?id="
+									+ id));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+				HttpResponse response = client.execute(request);
+				in = new BufferedReader(new InputStreamReader(response
+						.getEntity().getContent()));
+				StringBuffer sb = new StringBuffer("");
+				String line = "";
+				String NL = System.getProperty("line.separator");
+				while ((line = in.readLine()) != null) {
+					sb.append(line + NL);
+				}
+				in.close();
+				String page = sb.toString();
+				JSONArray total = null;
+				JSONObject object = null;
+				try {
+					object = (JSONObject) new JSONTokener(page).nextValue();
+					total = object.getJSONArray(id);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				try {
+					for (int i = 0; i < total.length(); i++) {
+						Log.v("Got some data", total.getJSONObject(i)
+								.getString("totalToCollect"));
+						retVal[0] = total.getJSONObject(i).getDouble(
+								"totalToCollect");
+						retVal[1] = total.getJSONObject(i).getDouble(
+								"totalReturn");
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return retVal;
+		}
+		
+		protected void onPostExecute(Long result) {
+			if (result == 1) {
+				_mCollect.setText("You need to collect: "+ Double.toString(_collectMoney));
+				_mReturn.setText("You need to return: "+ Double.toString(_returnMoney));
+				_date.clearComposingText();
+				_name.clearComposingText();
+				_description.clearComposingText();
+				_moneyAmount.clearComposingText();
+			}
+			else if(result == -1)
+			{
+				StartPage.this.runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+					mFacebook.authorize(StartPage.this, new String[]{}, new LoginDialogListener());
+						
+					}
+				});
+			}
+		}
+		
+	}
+	
+	/**
+	 * Get readable POST response
+	 * @param response
+	 * @return string what the server returned in response to the POST request
+	 */
+	private String getResponse(HttpResponse response)
+	{
+		BufferedReader in;
+		StringBuffer sb = new StringBuffer("");
+		try {
+			in = new BufferedReader(new InputStreamReader(response
+					.getEntity().getContent()));
+			String line = "";
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+			}
+			in.close();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		String page = sb.toString();
+		return page;
+	}
 	
 	/**
 	 * Traverse the friendList array and find the appropriate id for a given name
@@ -274,17 +485,15 @@ public class StartPage extends Activity {
 		private final ProgressDialog dialog = new ProgressDialog(StartPage.this);
 
 		protected void onPreExecute() {
-			this.dialog.setMessage("Refreshing...");
-			this.dialog.show();
 		}
 
 		protected Long doInBackground(String... urls) {
 			try {
-				JSONObject jsonNames = Util.parseJson(_mFacebook
+				JSONObject jsonNames = Util.parseJson(mFacebook
 						.request(urls[1]));
 				_friendList = jsonNames.getJSONArray("data");
 				setFriendNames();
-				JSONObject jsonMoney = Util.parseJson(_mFacebook
+				JSONObject jsonMoney = Util.parseJson(mFacebook
 						.request(urls[0]));
 				_currUName = jsonMoney.getString("name");
 				_currUID = jsonMoney.getString("id");
@@ -293,12 +502,21 @@ public class StartPage extends Activity {
 				_collectMoney = totalMoney[0];
 				_returnMoney = totalMoney[1];
 			} catch (MalformedURLException e) {
+				setResult(RESULT_CANCELED);
+				finish();
 				e.printStackTrace();
 			} catch (IOException e) {
+				setResult(RESULT_CANCELED);
+				finish();
 				e.printStackTrace();
 			} catch (JSONException e) {
+				setResult(RESULT_CANCELED);
+				finish();
 				e.printStackTrace();
 			} catch (FacebookError e) {
+				Log.d("Facebook error", "Should get caught here");
+				setResult(RESULT_CANCELED);
+				finish();
 				e.printStackTrace();
 			}
 			return (long) 1;
@@ -327,14 +545,14 @@ public class StartPage extends Activity {
 			// Index 0 is money to collect
 			// Index 1 is money to return
 			double[] retVal = { 0, 0 };
-			Log.v("HTTP try to get", "data");
+			Log.v("HTTP trying to get", "data");
 			BufferedReader in = null;
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpGet request = new HttpGet();
 				try {
 					request.setURI(new URI(
-							"http://kartikeyadubey.com/getItBackServer/getUserTotal.php?id="
+							"http://10.0.2.2/getItBackServer/getUserTotal.php?id="
 									+ id));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
@@ -395,13 +613,13 @@ public class StartPage extends Activity {
 		}
 
 		protected void onPostExecute(Long result) {
-			if (this.dialog.isShowing() && result == 1) {
+			if (result == 1) {
 				_personOne = (AutoCompleteTextView) findViewById(R.id.autocompleteFriends);
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(
 						StartPage.this, R.layout.list_item, _friendNames);
 				_personOne.setAdapter(adapter);
-				_mCollect.append(Double.toString(_collectMoney));
-				_mReturn.append(Double.toString(_returnMoney));
+				_mCollect.setText("You need to collect: "+ Double.toString(_collectMoney));
+				_mReturn.setText("You need to return: "+ Double.toString(_returnMoney));
 				this.dialog.dismiss();
 			}
 		}

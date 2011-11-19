@@ -13,4 +13,6 @@
 	<string name="date">Date</string>
 	<string name="dateselect">Change Date</string>
 	<string name="submit">Submit Bill</string>
+	<string name="viewBills">Who Owes you?</string>
+	<string name="viewReturns">You owe</string>
 </resources>

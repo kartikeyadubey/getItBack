@@ -3,33 +3,27 @@ package ssui.project;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
 import com.facebook.android.R;
-import com.facebook.android.Util;
-
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -42,10 +36,10 @@ public class ViewBills extends ListActivity
 	public static final String APP_ID = "161076967321553";
 	
 	//Adapter to create the scrollable list
-	private ArrayAdapter<String> adapter;
+	private ArrayAdapter<IdDescription> adapter;
 	
 	//Bill list: Name - Description: Amount
-	private String[] billList;
+	private ArrayList<IdDescription> billList;
 	
 	
 	/**
@@ -66,12 +60,7 @@ public class ViewBills extends ListActivity
 		Log.d("User id received", userId);
 		
 		GetDataTask t = new GetDataTask();
-		t.execute(userId);
-		String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-				"Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-				"Linux", "OS/2" };
-
-		
+		t.execute(userId);		
 	}
 	
 	@Override
@@ -105,7 +94,7 @@ public class ViewBills extends ListActivity
 		}
 
 		protected void onPostExecute(Long result) {
-			adapter = new ArrayAdapter<String>(getBaseContext(),R.layout.row_layout, R.id.billName, billList);
+			adapter = new BillListAdapter(ViewBills.this, R.layout.row_layout,billList);
 			setListAdapter(adapter);
 		}
 		
@@ -123,7 +112,7 @@ public class ViewBills extends ListActivity
 				HttpGet request = new HttpGet();
 				try {
 					request.setURI(new URI(
-							"http://10.0.2.2/getItBackServer/getBills.php?id="
+							"http://kartikeyadubey.com/getItBackServer/getBills.php?id="
 									+ id));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
@@ -140,7 +129,6 @@ public class ViewBills extends ListActivity
 				in.close();
 				String bills = sb.toString();
 				JSONObject bList = null;
-				JSONObject bill = null;
 				try {
 					bList = (JSONObject) new JSONTokener(bills).nextValue();
 				} catch (JSONException e1) {
@@ -148,10 +136,12 @@ public class ViewBills extends ListActivity
 					e1.printStackTrace();
 				}
 				try {
-					billList = new String[bList.getJSONArray(id).length()];
+					billList = new ArrayList<IdDescription>();
+					//billList = new IdDescription[bList.getJSONArray(id).length()];
 					for (int i = 0; i < bList.getJSONArray(id).length(); i++) {
 						JSONObject j = bList.getJSONArray(id).getJSONObject(i);
-						billList[i] = j.getString("personTwoName") + " - " + j.getString("description") + " : $" + j.getString("amount");
+						billList.add(new IdDescription(j.getString("personTwo"),
+										j.getString("personTwoName") + "\n" + j.getString("description") + " : $" + j.getString("amount")));
 					}
 				} catch (JSONException e) {
 					Toast.makeText(getApplicationContext(), "Please check you internet connection and try again", Toast.LENGTH_LONG).show();

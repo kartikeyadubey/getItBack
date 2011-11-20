@@ -205,7 +205,7 @@ public class StartPage extends Activity {
 	{
 		// Create a new HttpClient and Post Header
 	    HttpClient httpclient = new DefaultHttpClient();
-	    HttpPost httppost = new HttpPost("http://10.0.2.2/getItBackServer/addBill.php");
+	    HttpPost httppost = new HttpPost("http://kartikeyadubey.com/getItBackServer/addBill.php");
 
 	    try {
 	        // Add data
@@ -309,7 +309,7 @@ public class StartPage extends Activity {
 				HttpGet request = new HttpGet();
 				try {
 					request.setURI(new URI(
-							"http://10.0.2.2/getItBackServer/getUserTotal.php?id="
+							"http://kartikeyadubey.com/getItBackServer/getUserTotal.php?id="
 									+ id));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
@@ -552,7 +552,7 @@ public class StartPage extends Activity {
 				HttpGet request = new HttpGet();
 				try {
 					request.setURI(new URI(
-							"http://10.0.2.2/getItBackServer/getUserTotal.php?id="
+							"http://kartikeyadubey.com/getItBackServer/getUserTotal.php?id="
 									+ id));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();

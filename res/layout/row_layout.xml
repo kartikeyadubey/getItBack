@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="horizontal"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-    
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content" 
+	android:gravity="left|center"
+	android:layout_width="wrap_content" 
+	android:paddingBottom="5px"
+	android:paddingTop="5px" 
+	android:paddingLeft="5px">
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="22px"
-        android:layout_height="22px"
-        android:layout_marginLeft="4px"
-        android:layout_marginRight="10px"
-        android:layout_marginTop="4px"
-        android:src="@drawable/icon" >
-    </ImageView>
+    <RelativeLayout
+    	android:layout_width="wrap_content"
+	    android:layout_height="fill_parent">
 
-    <TextView
-        android:id="@+id/billName"
+	    <ImageView
+	    android:layout_centerVertical="true"
+        android:id="@+id/billIcon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4px"
-        android:text="test"
-        android:textSize="14px" >
-    </TextView>   
-    
+        android:layout_height="fill_parent"
+        android:layout_marginRight="6dip"
+        android:visibility="gone" />	    
+        <ProgressBar
+        android:layout_centerVertical="true"
+    	android:id="@+id/progress_bar" 	
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:maxWidth="30dip"
+		android:minWidth="30dip"
+		android:maxHeight="30dip"
+		android:minHeight="30dip"
+        android:layout_marginRight="6dip"
+		android:indeterminate="true" />
+	</RelativeLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="fill_parent">
+		<TextView android:id="@+id/billName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	</LinearLayout>
 </LinearLayout>

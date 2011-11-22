@@ -2,6 +2,8 @@ package ssui.project;
 
 import java.util.ArrayList;
 
+import session.SessionStore;
+
 import com.facebook.android.Facebook;
 
 import android.app.Activity;

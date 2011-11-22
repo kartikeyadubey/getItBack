@@ -41,7 +41,8 @@ public final class R {
         public static final int description=0x7f05000c;
         public static final int descriptionLabel=0x7f05000b;
         public static final int fName=0x7f050007;
-        public static final int fb_logout=0x7f050013;
+        public static final int fb_logout=0x7f050014;
+        public static final int graphCollect=0x7f050013;
         public static final int login=0x7f050000;
         public static final int moneyAmount=0x7f05000a;
         public static final int progress_bar=0x7f050002;
@@ -67,6 +68,7 @@ public final class R {
         public static final int delete=0x7f040005;
         public static final int description=0x7f04000a;
         public static final int friend=0x7f040009;
+        public static final int graphCollect=0x7f040010;
         public static final int hello=0x7f040002;
         public static final int post=0x7f040004;
         public static final int request=0x7f040001;

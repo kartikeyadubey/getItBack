@@ -24,13 +24,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import charting.BudgetPieChart;
+import charting.PersonTotal;
+
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.R;
 import com.facebook.android.Util;
-import ssui.project.SessionEvents.AuthListener;
-import ssui.project.SessionEvents.LogoutListener;
+
+import facebook.LoginDialogListener;
+import session.SessionEvents;
+import session.SessionStore;
+import session.SessionEvents.AuthListener;
+import session.SessionEvents.LogoutListener;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -76,7 +83,8 @@ public class StartPage extends Activity {
 	private Button _viewBills;
 	//View all returns
 	private Button _viewReturns;
-	
+	//Graph all collection
+	private Button _graphCollect;
 	
 	//Auto complete friend name
 	private AutoCompleteTextView _personOne;
@@ -108,6 +116,10 @@ public class StartPage extends Activity {
 	private String _currUName;
 	//Date for bill stored in mysql format
 	private String _postDate;
+	
+	//Total collections a person needs to make
+	//for graphing
+	private PersonTotal[] _personTotal;
 
 	/**
 	 * Called when Activity is created Generate the login screen for the user to
@@ -143,6 +155,7 @@ public class StartPage extends Activity {
 		_viewReturns = (Button) findViewById(R.id.viewReturns);
 		_description = (EditText) findViewById(R.id.description);
 		_name = (AutoCompleteTextView) findViewById(R.id.autocompleteFriends);
+		_graphCollect = (Button) findViewById(R.id.graphCollect);
 		_moneyAmount = (EditText) findViewById(R.id.moneyAmount);
 		mText = (TextView) findViewById(R.id.testText);
 		_mLogoutButton = (LogoutButton) findViewById(R.id.fb_logout);
@@ -157,7 +170,29 @@ public class StartPage extends Activity {
 		
 		_date.setText(Integer.toString(mMonth)+ "-" + Integer.toString(mDay) + "-" + Integer.toString(mYear));
 		_postDate = Integer.toString(mYear) + "-" + Integer.toString(mMonth)+ "-" + Integer.toString(mDay);
-
+		
+		
+		_graphCollect.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent();
+				BudgetPieChart b = new BudgetPieChart();
+				i = b.execute(getApplicationContext(), _personTotal);
+				startActivity(i);
+			}
+		});
+		
+		_viewReturns.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getApplicationContext(), ViewReturns.class);
+				i.putExtra("userid", _currUID);
+				SessionStore.save(mFacebook, getApplicationContext());
+				startActivityForResult(i, RESULT_OK);
+			}
+		});
+		
 		_viewBills.setOnClickListener(new OnClickListener(){
 			
 			//Start new Activity which displays all
@@ -192,6 +227,8 @@ public class StartPage extends Activity {
 			}
 		});
 	}
+	
+	
 
 	/**
 	 * Post the data and add it into database
@@ -369,10 +406,10 @@ public class StartPage extends Activity {
 			if (result == 1) {
 				_mCollect.setText("You need to collect: "+ Double.toString(_collectMoney));
 				_mReturn.setText("You need to return: "+ Double.toString(_returnMoney));
-				_date.clearComposingText();
-				_name.clearComposingText();
-				_description.clearComposingText();
-				_moneyAmount.clearComposingText();
+				_date.setText(Integer.toString(mMonth)+ "-" + Integer.toString(mDay) + "-" + Integer.toString(mYear));
+				_name.setText("");
+				_description.setText("");
+				_moneyAmount.setText("");
 			}
 			else if(result == -1)
 			{
@@ -497,8 +534,15 @@ public class StartPage extends Activity {
 						.request(urls[0]));
 				_currUName = jsonMoney.getString("name");
 				_currUID = jsonMoney.getString("id");
-				
-				final double totalMoney[] = getData(_currUID);
+				double totalMoney[] = {0,0};
+				try {
+					totalMoney = getData(new URI(
+							"http://kartikeyadubey.com/getItBackServer/getUserTotal.php?id="
+									+ _currUID));
+					setPersonTotal(new URI("http://kartikeyadubey.com/getItBackServer/getGraphTotal.php?id="+_currUID));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
 				_collectMoney = totalMoney[0];
 				_returnMoney = totalMoney[1];
 			} catch (MalformedURLException e) {
@@ -537,26 +581,14 @@ public class StartPage extends Activity {
 			_friendNames = tempfriendNames;
 		}
 
-		/**
-		 * Httprequest to connect to server and post data and receive and parse
-		 * response
-		 */
-		private double[] getData(String id) {
-			// Index 0 is money to collect
-			// Index 1 is money to return
-			double[] retVal = { 0, 0 };
+		private void setPersonTotal(URI uri)
+		{
 			Log.v("HTTP trying to get", "data");
 			BufferedReader in = null;
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpGet request = new HttpGet();
-				try {
-					request.setURI(new URI(
-							"http://kartikeyadubey.com/getItBackServer/getUserTotal.php?id="
-									+ id));
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
+				request.setURI(uri);
 				HttpResponse response = client.execute(request);
 				in = new BufferedReader(new InputStreamReader(response
 						.getEntity().getContent()));
@@ -572,7 +604,69 @@ public class StartPage extends Activity {
 				JSONObject object = null;
 				try {
 					object = (JSONObject) new JSONTokener(page).nextValue();
-					total = object.getJSONArray(id);
+					total = object.getJSONArray(_currUID);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				try {
+					_personTotal = new PersonTotal[total.length()];
+					for (int i = 0; i < total.length(); i++) {
+						Log.v("Got some data", total.getJSONObject(i)
+								.getString("total"));
+						 _personTotal[i] = new PersonTotal(total.getJSONObject(i).getString("personTwoName"), total.getJSONObject(i).getDouble("total"));
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		/**
+		 * Httprequest to connect to server and post data and receive and parse
+		 * response
+		 */
+		private double[] getData(URI uri) {
+			// Index 0 is money to collect
+			// Index 1 is money to return
+			double[] retVal = { 0, 0 };
+			Log.v("HTTP trying to get", "data");
+			BufferedReader in = null;
+			try {
+				HttpClient client = new DefaultHttpClient();
+				HttpGet request = new HttpGet();
+				request.setURI(uri);
+				HttpResponse response = client.execute(request);
+				in = new BufferedReader(new InputStreamReader(response
+						.getEntity().getContent()));
+				StringBuffer sb = new StringBuffer("");
+				String line = "";
+				String NL = System.getProperty("line.separator");
+				while ((line = in.readLine()) != null) {
+					sb.append(line + NL);
+				}
+				in.close();
+				String page = sb.toString();
+				JSONArray total = null;
+				JSONObject object = null;
+				try {
+					object = (JSONObject) new JSONTokener(page).nextValue();
+					total = object.getJSONArray(_currUID);
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

@@ -17,16 +17,20 @@
 package ssui.project;
 
 import com.facebook.android.Facebook;
-import ssui.project.LoginButton;
 import com.facebook.android.R;
 import com.facebook.android.Util;
-import ssui.project.SessionEvents.LogoutListener;
+
+import facebook.LoginButton;
+import facebook.LoginDialogListener;
+import session.SessionEvents;
+import session.SessionStore;
+import session.SessionEvents.AuthListener;
+import session.SessionEvents.LogoutListener;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import ssui.project.SessionEvents.AuthListener;
 
 
 public class GetItBackStartActivity extends Activity {

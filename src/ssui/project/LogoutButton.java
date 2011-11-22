@@ -16,16 +16,24 @@
 
 package ssui.project;
 
-import ssui.project.BaseRequestListener;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 
-import ssui.project.SessionEvents.AuthListener;
-import ssui.project.SessionEvents.LogoutListener;
+import session.SessionEvents;
+import session.SessionStore;
+import session.SessionEvents.AuthListener;
+import session.SessionEvents.LogoutListener;
+import ssui.project.R;
+import ssui.project.R.drawable;
+
 import com.facebook.android.Facebook.DialogListener;
+
+import facebook.BaseRequestListener;
+
+
 
 import android.app.Activity;
 import android.content.Context;

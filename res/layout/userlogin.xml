@@ -92,6 +92,11 @@
 		android:visibility="visible" android:layout_width="wrap_content"
 		android:layout_height="wrap_content"/>
 		</LinearLayout>
+		
+	<Button android:id="@+id/graphCollect" android:text="@string/graphCollect"
+		android:visibility="visible" android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+		
 	<ssui.project.LogoutButton android:id="@+id/fb_logout"
 		android:src="@drawable/facebook_logout" android:layout_margin="10dp"
 		android:layout_height="wrap_content" android:layout_width="wrap_content"

@@ -1,5 +1,10 @@
 package ssui.project;
-
+/**
+ * Class that stores all the information for a particular user
+ * to populate the UI and for use in creating the graph
+ * @author Kartikeya
+ *
+ */
 public class IdDescription {
 	public String userId;
 	public String description;

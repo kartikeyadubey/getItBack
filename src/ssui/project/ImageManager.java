@@ -13,10 +13,14 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
+/**
+ * Borrowed from http://codehenge.net/blog/2011/06/android-development-tutorial-asynchronous-lazy-loading-and-caching-of-listview-images/
+ * @author Kartikeya
+ *
+ */
 public class ImageManager 
 {
-	// Just using a hashmap for the cache. SoftReferences would 
+		// Just using a hashmap for the cache. SoftReferences would 
 		// be better, to avoid potential OutOfMemory exceptions
 		private HashMap<String, Bitmap> imageMap = new HashMap<String, Bitmap>();
 

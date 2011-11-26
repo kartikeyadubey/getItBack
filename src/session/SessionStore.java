@@ -26,15 +26,28 @@ public class SessionStore {
     private static final String TOKEN = "access_token";
     private static final String EXPIRES = "expires_in";
     private static final String KEY = "facebook-session";
+    private static String USERID = "";
     
     public static boolean save(Facebook session, Context context) {
         Editor editor =
             context.getSharedPreferences(KEY, Context.MODE_PRIVATE).edit();
         editor.putString(TOKEN, session.getAccessToken());
         editor.putLong(EXPIRES, session.getAccessExpires());
+        editor.putString("USERID", USERID);
         return editor.commit();
     }
 
+    public static boolean setUser(String id)
+    {
+    	USERID = id;
+    	return true;
+    }
+    
+    public static String getUser()
+    {
+    	return USERID;
+    }
+    
     public static boolean restore(Facebook session, Context context) {
         SharedPreferences savedSession =
             context.getSharedPreferences(KEY, Context.MODE_PRIVATE);

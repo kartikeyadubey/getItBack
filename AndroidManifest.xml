@@ -5,18 +5,20 @@
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="10" />
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".GetItBackStartActivity"
+    <application android:icon="@drawable/getitback_icon" android:label="@string/app_name">
+        <activity android:name=".StartPage"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StartPage"/>
+        <activity android:name=".AddBill"/>
 		<activity android:name=".ViewBills"/>
 		<activity android:name=".ViewReturns"/>
+		<activity android:name=".TabDisplay" />
 		<activity android:name="org.achartengine.GraphicalActivity" />
+		
     </application>
     
     <uses-permission android:name="android.permission.INTERNET"/>

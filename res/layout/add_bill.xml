@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:background="@drawable/background">
+	<TableRow android:paddingTop="10px">
+		<TextView android:paddingLeft="25px" android:text="@string/friend"
+			android:width="120px" 
+			android:textColor="@drawable/white" />
+		<AutoCompleteTextView android:id="@+id/autocompleteFriends"
+			android:width="350px" />
+	</TableRow>
+	<TableRow android:paddingTop="10px">
+		<TextView android:paddingLeft="25px" android:text="@string/amount" 
+		android:textColor="@drawable/white" />
+		<EditText android:id="@+id/moneyAmount"
+		android:numeric=""/>
+	</TableRow>
+	<TableRow android:paddingTop="10px">
+		<TextView android:paddingLeft="25px" android:layout_height="match_parent"
+			android:text="@string/description"
+			android:textColor="@drawable/white"  />
+		<EditText android:id="@+id/description"
+			android:gravity="center_vertical" android:lines="5" />
+	</TableRow>
+
+	<TableRow android:paddingTop="10px">
+		<TextView android:paddingLeft="25px" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:text="Date"
+			android:textColor="@drawable/white"  />
+		<Button android:id="@+id/dateButton" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:text="" />
+
+	</TableRow>
+
+	<TableRow />
+
+	<TableRow android:paddingTop="50px" android:paddingLeft="25px">
+		<Button android:layout_span="2" android:layout_width="fill_parent"
+			android:id="@+id/submitButton" android:text="@string/submit" />
+	</TableRow>
+</TableLayout>

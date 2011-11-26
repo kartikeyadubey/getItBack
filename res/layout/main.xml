@@ -1,15 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:background="@drawable/white"
-	android:gravity="center_horizontal" android:layout_height="match_parent" android:layout_width="match_parent">
+	android:orientation="vertical" android:gravity="center_horizontal" android:layout_height="match_parent" android:layout_width="match_parent"
+	android:background="@drawable/background">
 
+	<TextView  
+            android:id="@+id/custom_font"  
+            android:layout_width="wrap_content"  
+            android:layout_height="wrap_content"  
+            android:text="@string/appname"  
+            android:textSize="25sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="150sp"
+    />
+    
+    <TextView  
+            android:layout_width="wrap_content"  
+            android:layout_height="wrap_content"  
+            android:text="@string/appdescription"  
+            android:textSize="15sp"
+            android:layout_gravity="center"
+    />
+    
 	<ssui.project.LoginButton android:id="@+id/login"
-		android:src="@drawable/facebook_logout"  
+		android:background="@drawable/ic_login_button"  
 		android:layout_margin="10dp" 
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content"
-		android:layout_gravity="left"/>
+		android:layout_gravity="center"/>
 
-
+	<Button android:id="@+id/Enter"
+	android:visibility="gone"
+	android:text="@string/enter"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"/>
 
 </LinearLayout>

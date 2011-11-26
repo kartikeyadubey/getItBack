@@ -16,16 +16,23 @@
 
 package ssui.project;
 
-import ssui.project.BaseRequestListener;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 
-import ssui.project.SessionEvents.AuthListener;
-import ssui.project.SessionEvents.LogoutListener;
+import session.SessionEvents;
+import session.SessionStore;
+import session.SessionEvents.AuthListener;
+import session.SessionEvents.LogoutListener;
+import ssui.project.R;
+
+
 import com.facebook.android.Facebook.DialogListener;
+
+import facebook.BaseRequestListener;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -71,12 +78,19 @@ public class LoginButton extends ImageButton {
         setBackgroundColor(Color.TRANSPARENT);
         setAdjustViewBounds(true);
         setImageResource(fb.isSessionValid() ?
-        				R.drawable.facebook_logout : R.drawable.facebook_login);
+        				R.drawable.ic_logout_button : R.drawable.ic_login_button);
         drawableStateChanged();
         
         SessionEvents.addAuthListener(mSessionListener);
         SessionEvents.addLogoutListener(mSessionListener);
         setOnClickListener(new ButtonOnClickListener());
+    }
+    
+    protected void logout()
+    {
+    	SessionEvents.onLogoutBegin();
+        AsyncFacebookRunner asyncRunner = new AsyncFacebookRunner(mFb);
+        asyncRunner.logout(getContext(), new LogoutRequestListener());
     }
     
     private final class ButtonOnClickListener implements OnClickListener {
@@ -129,7 +143,7 @@ public class LoginButton extends ImageButton {
         
         public void onAuthSucceed() {
         	Log.v("SessionListener", "onAuthSucceed");
-            setImageResource(R.drawable.facebook_logout);
+            setImageResource(R.drawable.ic_logout_button);
             SessionStore.save(mFb, getContext());
         }
 
@@ -141,7 +155,7 @@ public class LoginButton extends ImageButton {
         
         public void onLogoutFinish() {
             SessionStore.clear(getContext());
-            setImageResource(R.drawable.facebook_login);
+            setImageResource(R.drawable.ic_login_button);
         }
     }
     

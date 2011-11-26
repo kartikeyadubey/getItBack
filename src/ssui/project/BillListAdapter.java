@@ -15,7 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+/**
+ * Class that initializes the lazy loading of images 
+ * and creates an adapter to display them in a listview
+ * @author Kartikeya
+ *
+ */
 public class BillListAdapter extends ArrayAdapter<IdDescription> {
 	private ArrayList<IdDescription> idDescriptions;
 	private Activity activity;
@@ -36,7 +41,7 @@ public class BillListAdapter extends ArrayAdapter<IdDescription> {
 	public static class ViewHolder{
 		public TextView description;
 		public ImageView image;
-		public ProgressBar progress; //ADDED
+		public ProgressBar progress;
 	}
 
 	@Override
@@ -50,11 +55,13 @@ public class BillListAdapter extends ArrayAdapter<IdDescription> {
 			holder = new ViewHolder();
 			holder.description = (TextView) v.findViewById(R.id.billName);
 			holder.image = (ImageView) v.findViewById(R.id.billIcon);
-			holder.progress = (ProgressBar) v.findViewById(R.id.progress_bar); //ADDED
+			holder.progress = (ProgressBar) v.findViewById(R.id.progress_bar);
 			v.setTag(holder);
 		}
 		else
+		{
 			holder=(ViewHolder)v.getTag();
+		}
 
 		final IdDescription idDescription = idDescriptions.get(position);
 		if (idDescription != null) {
@@ -62,7 +69,7 @@ public class BillListAdapter extends ArrayAdapter<IdDescription> {
 			String url = "https://graph.facebook.com/"+idDescriptions.get(position).userId+
 					"/picture&access_token="+mFacebook.getAccessToken();
 			holder.image.setTag(url);
-			imageManager.displayImage(url, activity, holder.image, holder.progress); //CHANGED
+			imageManager.displayImage(url, activity, holder.image, holder.progress);
 		}
 		return v;
 	}

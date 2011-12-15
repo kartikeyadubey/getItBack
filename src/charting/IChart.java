@@ -19,7 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 
 /**
- * Defines the demo charts.
+ * Defines the Pie charts.
  */
 public interface IChart {
   /** A constant for the name field in a list activity. */

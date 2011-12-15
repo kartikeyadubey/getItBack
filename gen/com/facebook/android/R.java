@@ -14,7 +14,7 @@ public final class R {
         public static final int add_bill=0x7f020000;
         public static final int add_bill_selected=0x7f020001;
         public static final int background=0x7f020002;
-        public static final int black=0x7f020018;
+        public static final int black=0x7f02001c;
         public static final int close=0x7f020003;
         public static final int enter_background=0x7f020004;
         public static final int facebook_icon=0x7f020005;
@@ -22,20 +22,24 @@ public final class R {
         public static final int facebook_login_down=0x7f020007;
         public static final int facebook_logout=0x7f020008;
         public static final int facebook_logout_down=0x7f020009;
-        public static final int getitback_icon=0x7f02000a;
-        public static final int ic_login_button=0x7f02000b;
-        public static final int ic_logout_button=0x7f02000c;
-        public static final int ic_tab_add=0x7f02000d;
-        public static final int ic_tab_collect=0x7f02000e;
-        public static final int ic_tab_return=0x7f02000f;
-        public static final int icon=0x7f020010;
-        public static final int loading_image_2=0x7f020011;
-        public static final int return_selected=0x7f020012;
-        public static final int returns=0x7f020013;
-        public static final int tab_background=0x7f020014;
-        public static final int white=0x7f020017;
-        public static final int who_owes=0x7f020015;
-        public static final int who_owes_selected=0x7f020016;
+        public static final int facebook_new_login=0x7f02000a;
+        public static final int facebook_new_login_down=0x7f02000b;
+        public static final int facebook_new_logout=0x7f02000c;
+        public static final int facebook_new_logout_down=0x7f02000d;
+        public static final int getitback_icon=0x7f02000e;
+        public static final int ic_login_button=0x7f02000f;
+        public static final int ic_logout_button=0x7f020010;
+        public static final int ic_tab_add=0x7f020011;
+        public static final int ic_tab_collect=0x7f020012;
+        public static final int ic_tab_return=0x7f020013;
+        public static final int icon=0x7f020014;
+        public static final int loading_image_2=0x7f020015;
+        public static final int return_selected=0x7f020016;
+        public static final int returns=0x7f020017;
+        public static final int tab_background=0x7f020018;
+        public static final int white=0x7f02001b;
+        public static final int who_owes=0x7f020019;
+        public static final int who_owes_selected=0x7f02001a;
     }
     public static final class id {
         public static final int Enter=0x7f050007;

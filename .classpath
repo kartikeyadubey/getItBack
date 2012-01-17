@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="src" path="com_facebook_android_src"/>
 	<classpathentry kind="lib" path="lib/json-simple-1.1-bundle.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Kartikeya/Downloads/achartengine-0.7.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kartikeya/workspace/getItBack/achartengine-0.7.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

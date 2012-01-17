@@ -21,7 +21,7 @@
             android:layout_gravity="center"
     />
     
-	<ssui.project.LoginButton android:id="@+id/login"
+	<source.core.LoginButton android:id="@+id/login"
 		android:background="@drawable/ic_login_button"  
 		android:layout_margin="10dp" 
 		android:layout_height="wrap_content" 
